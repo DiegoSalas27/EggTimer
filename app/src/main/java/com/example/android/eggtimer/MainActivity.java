@@ -14,13 +14,15 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.io.IOException;
+
 import pl.droidsonroids.gif.GifTextView;
 
 public class MainActivity extends AppCompatActivity {
 
     ImageView imgEgg;
     GifTextView gifEgg;
-    MediaPlayer mediaPlayer;
+    MediaPlayer mediaPlayer, mediaPlayer2;
     TextView textView;
     SeekBar seekBar;
     Button btnHatch;
@@ -35,12 +37,13 @@ public class MainActivity extends AppCompatActivity {
 
         imgEgg = (ImageView) findViewById(R.id.imgEgg);
         gifEgg = (GifTextView) findViewById(R.id.gifEgg);
-        mediaPlayer = MediaPlayer.create(this, R.raw.eggcrack);
+        mediaPlayer = MediaPlayer.create(this, R.raw.fondo);
+        mediaPlayer2 = MediaPlayer.create(this, R.raw.eggcrack);
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
         btnHatch = (Button) findViewById(R.id.btnHatch);
 
-        seekBar.setMax(600); //this is in seconds (1 minute is 60 seconds)
+        seekBar.setMax(39); //this is in seconds (1 minute is 60 seconds)
         seekBar.setProgress(30); //sets the initial position
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -80,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     imgEgg.setVisibility(view.VISIBLE);
                     gifEgg.setVisibility(view.GONE);
                     recall = (int) millisUntilFinished / 1000;
-
+                    mediaPlayer.start();
                 }
 
                 @Override
@@ -89,8 +92,9 @@ public class MainActivity extends AppCompatActivity {
                     textView.setText("0:00");
                     imgEgg.setVisibility(view.GONE);
                     gifEgg.setVisibility(view.VISIBLE);
-                    playMusic(view);
-
+                    mediaPlayer.pause();
+                    mediaPlayer.seekTo(0);
+                    mediaPlayer2.start();
                     textView.setText("0:30");
                     seekBar.setProgress(30);
                     countDownTimer.cancel();
@@ -98,11 +102,12 @@ public class MainActivity extends AppCompatActivity {
                     seekBar.setEnabled(true);
                     counterIsActive = false;
 
+
                 }
             }.start();
         } else{
 
-            resterTimer();
+            pauseTimer();
 
         }
     }
@@ -122,20 +127,15 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(Integer.toString(minutes) + ":" + secondString);
 
     }
-    public void resterTimer(){
+    public void pauseTimer(){
 
         textView.setText(Integer.toString(recall));
         seekBar.setProgress(recall);
         countDownTimer.cancel();
         btnHatch.setText("HATCH");
+        mediaPlayer.pause();
         seekBar.setEnabled(true);
         counterIsActive = false;
 
     }
-    public void playMusic(View view){
-
-        mediaPlayer.start();
-    }
-
-
 }
